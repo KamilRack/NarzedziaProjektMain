@@ -1,0 +1,385 @@
+﻿@*@model IEnumerable<Narzedzia.Models.ParentHomeModel>? *@
+@model Tuple<List<Narzedzie>, List<Awaria>>
+
+@{
+    ViewData["Title"] = "Strona główna";
+}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+@{
+    if (User.IsInRole("admin") || (User.IsInRole("nadzor")))
+    {
+
+        <div class="container">
+            <div class="row justify-content-center justify-text-center mb-5">
+
+                <h1 class="text-center oswald_400">Podsumowanie wszystkich narzędzi</h1>
+
+                <hr />
+                <div class="card cd col-4 col-lg-2">
+                    <div class="card-body cb-p">@ViewBag.Przyjete</div>
+                    <div class="card-footer inter_300">Przyjęte</div>
+                </div>
+
+                <div class="card cd col-4 col-lg-2">
+                    <div class="card-body cb-u">@ViewBag.Uzywane</div>
+                    <div class="card-footer inter_300">Używane</div>
+                </div>
+
+                <div class="card cd col-4 col-lg-2">
+                    <div class="card-body cb-n">@ViewBag.Naprawiane</div>
+                    <div class="card-footer inter_300">Naprawiane</div>
+                </div>
+
+                <div class="card cd col-4 col-lg-2">
+                    <div class="card-body cb-z">@ViewBag.Zlikwidowane</div>
+                    <div class="card-footer inter_300">Zlikwidowane</div>
+                </div>
+
+            </div>
+        </div>
+        
+                    @if (User.IsInRole("admin"))
+                    {
+
+            
+            <h1 class="text-center mb-3 oswald_400">Panel administracyjny</h1>
+            <hr />
+            
+            <div class="row justify-content-center">
+                <div class="d-grid gap-2 col-sm-12 col-lg-4">
+                    <a type="button" class="btn btn-dark btn-lg btn-tool inter_300" asp-area="" asp-controller="Narzedzia" asp-action="Index"><i class="bi bi-wrench-adjustable"></i> Narzędzia</a>
+                    <a type="button" class="btn btn-dark btn-lg btn-tool inter_300" asp-area="" asp-controller="Kategorie" asp-action="Index"><i class="bi bi-card-checklist"></i> Kategorie</a>
+                    <a type="button" class="btn btn-dark btn-lg btn-tool inter_300" asp-area="" asp-controller="Producenci" asp-action="Index"><i class="bi bi-boxes"></i> Producenci</a>
+                    <br />
+                    </div>
+
+                <div class="d-grid gap-2 col-sm-12 col-lg-4">
+                    <a type="button" class="btn btn-dark btn-lg btn-user inter_300" asp-area="" asp-controller="Uzytkownicy" asp-action="Index"><i class="bi bi-people"></i> Użytkownicy</a>
+                    <a type="button" class="btn btn-dark btn-lg btn-user inter_400" asp-area="" asp-controller="Wydzialy" asp-action="Index"><i class="bi bi-building"></i> Wydziały</a>
+                    <a type="button" class="btn btn-dark btn-lg btn-user inter_300" asp-area="" asp-controller="Stanowiska" asp-action="Index"><i class="bi bi-diagram-2-fill"></i> Stanowiska</a>
+                    <br />
+                    </div>
+                
+                </div>
+            <div class="row justify-content-center">
+            <div class="d-grid gap-2 col-sm-12 col-lg-4">
+                <a type="button" class="btn btn-dark btn-lg btn-tool inter_300" asp-area="" asp-controller="Awarie" asp-action="Index"><i class="bi bi-ticket-detailed"></i> Awarie</a>
+            </div>
+            </div>
+  <br />
+
+           
+            <h1 class="text-center mb-3 oswald_400">Lista zgłoszeń: @*@ViewBag.ImieNazwisko (@User.Identity?.Name)*@</h1>
+            <hr />
+            <div id="lista-zgloszen-container">
+                @await Html.PartialAsync("_AwariePartialView", Model)
+            </div>
+           
+                    }
+                    @if (User.IsInRole("nadzor"))
+                    {
+
+           
+            <h1 class="text-center mb-3 oswald_400">Panel nadzoru</h1>
+            <hr />
+            <div class="row justify-content-center">
+                <div class="d-grid gap-2 col-sm-12 col-lg-8">
+                    <a type="button" class="btn btn-dark btn-lg btn-tool inter_300" asp-area="" asp-controller="Narzedzia" asp-action="Index"><i class="bi bi-wrench-adjustable"></i> Narzędzia</a>
+                    <a type="button" class="btn btn-dark btn-lg btn-tool inter_300" asp-area="" asp-controller="Kategorie" asp-action="Index"><i class="bi bi-card-checklist"></i> Kategorie</a>
+                    <a type="button" class="btn btn-dark btn-lg btn-tool inter_300" asp-area="" asp-controller="Producenci" asp-action="Index"><i class="bi bi-boxes"></i> Producenci</a>
+                    <a type="button" class="btn btn-dark btn-lg btn-tool inter_300" asp-area="" asp-controller="Awarie" asp-action="Index"><i class="bi bi-ticket-detailed"></i> Awarie</a>
+                </div>
+            </div>
+            <br />
+            <h1 class="text-center mb-3 oswald_400">Lista zgłoszeń: @*@ViewBag.ImieNazwisko (@User.Identity?.Name)*@</h1>
+            <hr />
+            <div id="lista-zgloszen-container">
+                @await Html.PartialAsync("_AwariePartialView", Model)
+            </div>
+            
+                    }
+
+                   
+    }
+}
+
+@{
+    if (User.IsInRole("pracownik"))
+    {
+        <div class="container">
+            <div class="row justify-content-center justify-text-center mb-5">
+
+                <h1 class="text-center oswald_400">Podsumowanie Twoich narzędzi</h1>
+
+                <hr />
+
+                <div class="card cd col-4 col-lg-2">
+                    <div class="card-body cb-p">@ViewBag.Przyjete</div>
+                    <div class="card-footer inter_300">Przyjęte</div>
+                </div>
+
+                <div class="card cd col-4 col-lg-2">
+                    <div class="card-body cb-u">@ViewBag.Uzywane</div>
+                    <div class="card-footer inter_300">Używane</div>
+                </div>
+
+                <div class="card cd col-4 col-lg-2">
+                    <div class="card-body cb-n">@ViewBag.Naprawiane</div>
+                    <div class="card-footer inter_300">Naprawiane</div>
+                </div>
+
+                <div class="card cd col-4 col-lg-2">
+                    <div class="card-body cb-z">@ViewBag.Zlikwidowane</div>
+                    <div class="card-footer inter_300">Zlikwidowane</div>
+                </div>
+
+            </div>
+        </div>
+        <h1 class="text-center mb-3 oswald_400">Lista narzędzi: @ViewBag.ImieNazwisko (@User.Identity?.Name)</h1>
+        <hr />
+        
+        <table class="table" id="tools">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayName("Nazwa")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Producent")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Numer narzędzia")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Kategoria")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Data przyjęcia")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Status")
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var narzedzie in Model.Item1)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => narzedzie.Nazwa)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => narzedzie.Producenci.NazwaProducenta)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => narzedzie.NumerNarzedzia)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => narzedzie.Kategorie.NazwaKategorii)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => narzedzie.DataPrzyjecia)
+                        </td>
+                        <td>
+                            @switch (narzedzie.Status)
+                            {
+                                case Status.przyjęte:
+                                    <i class="bi bi-circle-fill" style="color: #abadaf;"></i>
+                                    break;
+
+                                case Status.używane:
+                                    <i class="bi bi-circle-fill" style="color: var(--bs-success);"></i>
+                                    break;
+
+                                case Status.naprawiane:
+                                    <i class="bi bi-circle-fill" style="color: var(--bs-primary);"></i>
+                                    break;
+
+                                case Status.zlikwidowane:
+                                    <i class="bi bi-circle-fill" style="color: var(--bs-secondary);"></i>
+                                    break;
+                            }
+                            @Html.DisplayFor(modelItem => narzedzie.Status)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <h1 class="text-center mb-3 oswald_400">Lista zgłoszeń: @*@ViewBag.ImieNazwisko (@User.Identity?.Name)*@</h1>
+        <hr />
+
+        <div id="lista-zgloszen-container">
+            @await Html.PartialAsync("_AwariePartialView", Model)
+        </div>
+        
+
+}
+
+   
+
+    
+}
+        @section Scripts{
+        <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.13.1/datatables.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.13.1/b-2.3.3/b-html5-2.3.3/b-print-2.3.3/sp-2.1.0/datatables.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('#tools').DataTable({
+                    pageLength: 50,
+                    language: {
+                        "decimal": "",
+                        "emptyTable": "Brak danych do wyświetlenia",
+                        "info": " Pozycje od _START_ do _END_ z _TOTAL_ rekordów",
+                        "infoEmpty": "Pozycji 0 z 0 dostępnych",
+                        "infoFiltered": "(filtrowanie z _MAX_ dostępnych pozycji)",
+                        "infoPostFix": "",
+                        "thousands": " ",
+                        "lengthMenu": "Pokaż _MENU_ pozycji",
+                        "loadingRecords": "Ładowanie...",
+                        "processing": "Przetwarzanie...",
+                        "search": "Wyszukaj:",
+                        "zeroRecords": "Nie znaleziono danych",
+                        "paginate": {
+                            "first": "Pierwsza",
+                            "last": "Ostatnia",
+                            "next": "Następna",
+                            "previous": "Poprzednia"
+                        },
+                        "aria": {
+                            "sortAscending": ": sortuje kolumnę rosnąco",
+                            "sortDescending": ": sortuje kolumnę malejąco"
+                        }
+                    }
+                   
+                });
+            });
+        </script>
+        <script>
+            $(document).ready(function () {
+                $('#awarie').DataTable({
+                    pageLength: 50,
+                    language: {
+                        "decimal": "",
+                        "emptyTable": "Brak danych do wyświetlenia",
+                        "info": " Pozycje od _START_ do _END_ z _TOTAL_ rekordów",
+                        "infoEmpty": "Pozycji 0 z 0 dostępnych",
+                        "infoFiltered": "(filtrowanie z _MAX_ dostępnych pozycji)",
+                        "infoPostFix": "",
+                        "thousands": " ",
+                        "lengthMenu": "Pokaż _MENU_ pozycji",
+                        "loadingRecords": "Ładowanie...",
+                        "processing": "Przetwarzanie...",
+                        "search": "Wyszukaj:",
+                        "zeroRecords": "Nie znaleziono danych",
+                        "paginate": {
+                            "first": "Pierwsza",
+                            "last": "Ostatnia",
+                            "next": "Następna",
+                            "previous": "Poprzednia"
+                        },
+                        "aria": {
+                            "sortAscending": ": sortuje kolumnę rosnąco",
+                            "sortDescending": ": sortuje kolumnę malejąco"
+                        }
+                    }
+                    
+                   
+
+                });
+            });
+        </script>
+        <script>
+            $(document).ready(function () {
+                $('#awarie1').DataTable({
+                    pageLength: 50,
+                    language: {
+                        "decimal": "",
+                        "emptyTable": "Brak danych do wyświetlenia",
+                        "info": " Pozycje od _START_ do _END_ z _TOTAL_ rekordów",
+                        "infoEmpty": "Pozycji 0 z 0 dostępnych",
+                        "infoFiltered": "(filtrowanie z _MAX_ dostępnych pozycji)",
+                        "infoPostFix": "",
+                        "thousands": " ",
+                        "lengthMenu": "Pokaż _MENU_ pozycji",
+                        "loadingRecords": "Ładowanie...",
+                        "processing": "Przetwarzanie...",
+                        "search": "Wyszukaj:",
+                        "zeroRecords": "Nie znaleziono danych",
+                        "paginate": {
+                            "first": "Pierwsza",
+                            "last": "Ostatnia",
+                            "next": "Następna",
+                            "previous": "Poprzednia"
+                        },
+                        "aria": {
+                            "sortAscending": ": sortuje kolumnę rosnąco",
+                            "sortDescending": ": sortuje kolumnę malejąco"
+                        }
+                    }
+                
+                });
+            });
+        </script>
+        <script>
+            $(document).ready(function () {
+                $('#awarie2').DataTable({
+                    pageLength: 50,
+                    language: {
+                        "decimal": "",
+                        "emptyTable": "Brak danych do wyświetlenia",
+                        "info": " Pozycje od _START_ do _END_ z _TOTAL_ rekordów",
+                        "infoEmpty": "Pozycji 0 z 0 dostępnych",
+                        "infoFiltered": "(filtrowanie z _MAX_ dostępnych pozycji)",
+                        "infoPostFix": "",
+                        "thousands": " ",
+                        "lengthMenu": "Pokaż _MENU_ pozycji",
+                        "loadingRecords": "Ładowanie...",
+                        "processing": "Przetwarzanie...",
+                        "search": "Wyszukaj:",
+                        "zeroRecords": "Nie znaleziono danych",
+                        "paginate": {
+                            "first": "Pierwsza",
+                            "last": "Ostatnia",
+                            "next": "Następna",
+                            "previous": "Poprzednia"
+                        },
+                        "aria": {
+                            "sortAscending": ": sortuje kolumnę rosnąco",
+                            "sortDescending": ": sortuje kolumnę malejąco"
+                        }
+                    }
+               
+                });
+            });
+        </script>
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Funkcja do odświeżania częściowego widoku
+            function refreshPartialView() {
+                $.get('@Url.Action("PobierzZgloszenia", "Home")', function (data) {
+                    $('#lista-zgloszen-container').html(data);
+                });
+            }
+
+            // Uruchom funkcję odświeżania na starcie i co określony czas
+            refreshPartialView();
+            setInterval(refreshPartialView, 10000); // Odśwież co 60 sekund (lub dostosuj czas do swoich potrzeb)
+        });
+    </script>
+
+  
+
+   
+}
+    
+
+ 

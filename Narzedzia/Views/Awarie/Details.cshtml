@@ -1,0 +1,85 @@
+﻿@model Narzedzia.Models.Awaria
+
+@{
+    ViewData["Title"] = "Szczegóły zgłoszenia awarii";
+}
+
+<h1>Szczegóły awarii</h1>
+
+<div>
+    <h4>Szczegóły awarii:</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayName("Opis awarii:")
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.DescriptionAwaria)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayName("Nr. telefonu kontaktowego:")
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NumberAwaria)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayName("Data zgłoszenia:")
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.DataPrzyjecia)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+        <dd class = "col-sm-10">
+            @switch (@ViewBag.StatusAwaria)
+            {
+                case StatusAwaria.nowe:
+                    <i class="bi bi-circle-fill" style="color: var(--bs-success);"></i>
+                    break;
+
+                case StatusAwaria.realizacja:
+                    <i class="bi bi-circle-fill" style="color: var(--bs-primary);"></i>
+                    break;
+
+                case StatusAwaria.zakończone:
+                    <i class="bi bi-circle-fill" style="color: var(--bs-secondary);"></i>
+                    break;
+            }
+            @Html.DisplayFor(model => model.Status)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayName("Użytkownik zgłaszający:")
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Uzytkownicy.Email)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayName("Nazwa narzędzia:")
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Narzedzie.Nazwa)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayName("Użytkownik realizujący:")
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.UzytkownikRealizujacy.Email)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayName("Notatka techniczna:")
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.NotatkaTechniczna)
+        </dd>
+        
+    </dl>
+</div>
+<div>
+
+    <a asp-action="Edit" asp-route-id="@Model?.IdAwaria" class="btn btn-primary">Edytuj</a>
+    <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Powrót do listy zgłoszeń</a>
+    <a asp-action="Index" class="btn btn-light">Spis awarii</a>
+
+
+</div>

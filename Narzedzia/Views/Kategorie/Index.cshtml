@@ -1,0 +1,81 @@
+﻿@model IEnumerable<Narzedzia.Models.Kategoria>
+
+@{
+    ViewData["Title"] = "Kategorie narzędzi";
+}
+
+<h1 class="oswald_400">Kategorie narzędzi</h1>
+<hr />
+<p>
+    <a asp-action="Create" class="btn btn-outline-success">Dodaj</a>
+</p>
+<table class="table" id="category">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.NazwaKategorii)
+            </th>
+            <th>
+                @Html.DisplayName("Liczba narzędzi:")
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Active)
+             </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.NazwaKategorii)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Narzedzia.Count)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Active)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.KategoriaId" class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil"></i> Edytuj</a>
+                <a asp-action="Delete" asp-route-id="@item.KategoriaId" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i> Usuń</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+@section Scripts{
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.13.1/datatables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#category').DataTable({
+                pageLength: 50,
+                language: {
+                    "decimal": "",
+                    "emptyTable": "Brak danych do wyświetlenia",
+                    "info": " Pozycje od _START_ do _END_ z _TOTAL_ rekordów",
+                    "infoEmpty": "Pozycji 0 z 0 dostępnych",
+                    "infoFiltered": "(filtrowanie z _MAX_ dostępnych pozycji)",
+                    "infoPostFix": "",
+                    "thousands": " ",
+                    "lengthMenu": "Pokaż _MENU_ pozycji",
+                    "loadingRecords": "Ładowanie...",
+                    "processing": "Przetwarzanie...",
+                    "search": "Wyszukaj:",
+                    "zeroRecords": "Nie znaleziono danych",
+                    "paginate": {
+                        "first": "Pierwsza",
+                        "last": "Ostatnia",
+                        "next": "Następna",
+                        "previous": "Poprzednia"
+                    },
+                    "aria": {
+                        "sortAscending": ": sortuje kolumnę rosnąco",
+                        "sortDescending": ": sortuje kolumnę malejąco"
+                    }
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,155 @@
+﻿<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Narzedzia</title>
+    <link rel="stylesheet" href="~/css/bootstrap_colors.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Narzedzia.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/dark-mode.css" id="dark-mode-stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Oswald:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.13.1/b-2.3.3/b-html5-2.3.3/b-print-2.3.3/sp-2.1.0/datatables.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    @if (IsSectionDefined("Styles"))
+    {
+        @RenderSection("Styles")
+    }
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand inter_900" asp-area="" asp-controller="Home" asp-action="Index"><i class="bi bi-wrench-adjustable-circle-fill"></i> Tool Inspection List</a>
+               
+                        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                            <ul class="navbar-nav flex-grow-1">
+                               
+                            
+
+
+
+                        @{
+                            if (User.IsInRole("pracownik"))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link text-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-person-check"></i>Użytkownik</a>
+                                    <ul class="dropdown-menu">
+
+                                        <li><a class="dropdown-item text-dark" asp-area="" asp-controller="Awarie" asp-action="Create"><i class="bi bi-ticket-detailed"></i> Zgłoś awarię</a></li>
+
+                                    </ul>
+                                </li>
+
+
+
+                            }
+                        }
+                        @{
+                            if (User.IsInRole("nadzor"))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link text-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-shield-check"></i> Nadzór</a>
+                                    <ul class="dropdown-menu">
+                                <li><a class="dropdown-item text-dark" asp-area="" asp-controller="Narzedzia" asp-action="Index"><i class="bi bi-wrench-adjustable"></i> Narzędzia</a></li>
+                                <li><a class="dropdown-item text-dark" asp-area="" asp-controller="Kategorie" asp-action="Index"><i class="bi bi-card-checklist"></i> Kategorie</a></li>
+                                <li><a class="dropdown-item text-dark" asp-area="" asp-controller="Producenci" asp-action="Index"><i class="bi bi-boxes"></i> Producenci</a></li>
+                                        <li><a class="dropdown-item text-dark" asp-area="" asp-controller="Awarie" asp-action="Index"><i class="bi bi-ticket-detailed"></i> Awarie</a></li>
+
+                                </ul>
+                        </li>
+                            }
+                        }
+
+                        @{
+                            if (User.IsInRole("admin"))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link text-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-gear"></i> Administracja</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item text-dark" asp-area="" asp-controller="Awarie" asp-action="Index"><i class="bi bi-ticket-detailed"></i> Awarie</a></li>
+                                        <li><a class="dropdown-item text-dark" asp-area="" asp-controller="Narzedzia" asp-action="Index"><i class="bi bi-wrench-adjustable"></i> Narzędzia</a></li>
+                                        <li><a class="dropdown-item text-dark" asp-area="" asp-controller="Kategorie" asp-action="Index"><i class="bi bi-card-checklist"></i> Kategorie</a></li>
+                                        <li><a class="dropdown-item text-dark" asp-area="" asp-controller="Producenci" asp-action="Index"><i class="bi bi-boxes"></i> Producenci</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-dark" asp-area="" asp-controller="Uzytkownicy" asp-action="Index"><i class="bi bi-people"></i> Użytkownicy</a></li>
+                                        <li><a class="dropdown-item text-dark" asp-area="" asp-controller="Wydzialy" asp-action="Index"><i class="bi bi-building"></i> Wydziały</a></li>
+                                        <li><a class="dropdown-item text-dark" asp-area="" asp-controller="Stanowiska" asp-action="Index"><i class="bi bi-diagram-2-fill"></i> Stanowiska</a></li>
+                                    </ul>
+                                </li>
+                            }
+                                     }
+                        <button id="toggle-dark-mode" class="btn btn-dark btn-tool inter_300"><b>Przełącz tryb</b></button>
+
+                        <!-- Inna zawartość strony -->
+                        <!-- Skrypty JavaScript (np. jQuery) -->
+                        <script>
+                            var isDarkMode = false;
+                            
+
+                            document.getElementById("toggle-dark-mode").addEventListener("click", function () {
+                                // Pobierz linki do arkuszy stylów CSS trybu jasnego i ciemnego
+                                var siteStylesheet = document.getElementById("site-stylesheet");
+                                var darkModeStylesheet = document.getElementById("dark-mode-stylesheet");
+
+                                // Przełącz tryb
+                                isDarkMode = !isDarkMode;
+
+                                if (isDarkMode) {
+                                    // Włącz tryb ciemny
+                                    siteStylesheet.remove();
+                                    darkModeStylesheet.disabled = false;
+                                } else {
+                                    // Włącz tryb jasny
+                                    var link = document.createElement("link");
+                                    link.rel = "stylesheet";
+                                    link.href = "/css/site.css"; // Poprawny adres URL arkusza stylów trybu jasnego
+                                    link.id = "site-stylesheet";
+                                    document.head.appendChild(link);
+                                    darkModeStylesheet.disabled = true;
+                                }
+
+                                // Zmień klasę tabel w zależności od trybu
+                                var tables = document.querySelectorAll("table");
+                                for (var i = 0; i < tables.length; i++) {
+                                    tables[i].classList.toggle("table-dark", isDarkMode);
+                                    tables[i].classList.toggle("table-light", !isDarkMode);
+                                }
+                            });
+
+                            // Dodaj poniższy kod, aby na początku wyświetlał się arkusz stylów trybu jasnego
+                            var link = document.createElement("link");
+                            link.rel = "stylesheet";
+                            link.href = "/css/site.css"; // Poprawny adres URL arkusza stylów trybu jasnego
+                            link.id = "site-stylesheet";
+                            document.head.appendChild(link);
+                        </script>
+
+
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; @DateTime.Now.Year - Tool Inspection List for <a href="https://www.cnhindustrialcapital.com/pl_pl">CNH Industrial Polska Sp. z o.o.</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

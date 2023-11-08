@@ -6,6 +6,12 @@
 
 <h1 class="oswald_400">Szczegóły narzędzia</h1>
 
+<style>
+    .details-image {
+        width: 300px; /* Dowolny rozmiar zdjęcia na stronie "Details" */
+        height: 300px;
+    }
+</style>
 <div>
     <hr />
     <dl class="row interspace" style="font-size: 1.1rem;">
@@ -68,6 +74,10 @@
                     break;
             }
             @Html.DisplayFor(model => model.Status)
+        </dd>
+        <dd>
+            <img src="~/img/narzedziagraphic/@Model.ZdjecieFileName" class="details-image" alt="Zdjęcie narzędzia">
+
         </dd>
     </dl>
 </div>

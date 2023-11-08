@@ -8,7 +8,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4 interspace">
-        <form asp-action="Create">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Nazwa" class="control-label"></label>
@@ -32,6 +32,11 @@
                 <label asp-for="DataPrzyjecia" class="control-label"></label>
                 <input asp-for="DataPrzyjecia" class="form-control" value="@DateTime.Today.ToString("yyyy-MM-dd")"/>
                 <span asp-validation-for="DataPrzyjecia" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ZdjecieFileName" class="control-label"></label>
+                <input asp-for="ZdjecieFileName" type="file" class="form-control" />
+                <span asp-validation-for="ZdjecieFileName" class="text-danger"></span>
             </div>
 
             @*<div class="form-group">

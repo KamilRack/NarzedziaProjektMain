@@ -28,6 +28,11 @@ namespace Narzedzia.Controllers
             var applicationDbContext = _context.Narzedzia.Include(n => n.Kategorie).Include(n => n.Producenci).Include(n => n.Uzytkownicy);
             return View(await applicationDbContext.ToListAsync());
         }
+        public async Task<IActionResult> ListGraphic()
+        {
+            var applicationDbContext = _context.Narzedzia.Include(n => n.Kategorie).Include(n => n.Producenci).Include(n => n.Uzytkownicy);
+            return View(await applicationDbContext.ToListAsync());
+        }
 
         // GET: Narzedzia/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -65,14 +70,31 @@ namespace Narzedzia.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("NarzedzieId,ProducentId,KategoriaId,DataPrzyjecia,UzytkownikId,NumerNarzedzia,Nazwa,Status")] Narzedzie narzedzie)
+        public async Task<IActionResult> Create([Bind("NarzedzieId,ProducentId,KategoriaId,DataPrzyjecia,UzytkownikId,NumerNarzedzia,Nazwa,Status,ZdjecieFileName")] Narzedzie narzedzie, IFormFile ZdjecieFileName)
         {
             if (ModelState.IsValid)
             {
+                if (ZdjecieFileName != null && ZdjecieFileName.Length > 0)
+                {
+                    // Wygeneruj unikalny identyfikator dla nazwy pliku na serwerze (np. GUID)
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(ZdjecieFileName.FileName);
+                    string uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/narzedziagraphic", uniqueFileName);
+
+                    using (var stream = new FileStream(uploadPath, FileMode.Create))
+                    {
+                        await ZdjecieFileName.CopyToAsync(stream);
+                    }
+
+                    // Przypisz nazwę pliku do właściwości ZdjecieFileName modelu Narzedzie
+                    narzedzie.ZdjecieFileName = uniqueFileName;
+                }
+
                 _context.Add(narzedzie);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            // Jeśli walidacja nie powiodła się, ponownie zwróć widok Create z błędami
             ViewData["KategoriaId"] = new SelectList(_context.Kategorie, "KategoriaId", "NazwaKategorii", narzedzie.KategoriaId);
             ViewData["ProducentId"] = new SelectList(_context.Producenci, "ProducentId", "NazwaProducenta", narzedzie.ProducentId);
             ViewData["UzytkownikId"] = new SelectList(_context.Uzytkownicy, "Id", "Id", narzedzie.UzytkownikId);
@@ -82,27 +104,32 @@ namespace Narzedzia.Controllers
         // GET: Narzedzia/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Narzedzia == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var narzedzie = await _context.Narzedzia.Include(n => n.Uzytkownicy).FirstOrDefaultAsync(m => m.NarzedzieId == id);
+            var narzedzie = await _context.Narzedzia.FindAsync(id);
+
             if (narzedzie == null)
             {
                 return NotFound();
             }
+
             ViewData["KategoriaId"] = new SelectList(_context.Kategorie, "KategoriaId", "NazwaKategorii", narzedzie.KategoriaId);
             ViewData["ProducentId"] = new SelectList(_context.Producenci, "ProducentId", "NazwaProducenta", narzedzie.ProducentId);
+
             if (narzedzie.UzytkownikId == null)
             {
                 ViewData["UzytkownikId"] = new SelectList(_context.Uzytkownicy, "Id", "Imie_Nazwisko");
-            } else
+            }
+            else
             {
                 ViewData["UzytkownikId"] = new SelectList(_context.Uzytkownicy, "Id", "Imie_Nazwisko", narzedzie.UzytkownikId);
                 ViewData["Obecny"] = narzedzie.Uzytkownicy?.Imie_Nazwisko;
                 ViewData["ObecnyId"] = narzedzie.UzytkownikId;
             }
+
             return View(narzedzie);
         }
 
@@ -111,7 +138,7 @@ namespace Narzedzia.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("NarzedzieId,ProducentId,KategoriaId,DataPrzyjecia,NumerNarzedzia,Nazwa,Status,UzytkownikId")] Narzedzie narzedzie, string? obecny)
+        public async Task<IActionResult> Edit(int id, [Bind("NarzedzieId,ProducentId,KategoriaId,DataPrzyjecia,NumerNarzedzia,Nazwa,Status,UzytkownikId,ZdjecieFileName")] Narzedzie narzedzie, IFormFile? ZdjecieFileName, string? obecny)
         {
             if (id != narzedzie.NarzedzieId)
             {
@@ -122,11 +149,41 @@ namespace Narzedzia.Controllers
             {
                 try
                 {
+                    var existingNarzedzie = await _context.Narzedzia.FindAsync(id);
+
+                    if (existingNarzedzie == null)
+                    {
+                        return NotFound();
+                    }
+
+                    if (ZdjecieFileName != null && ZdjecieFileName.Length > 0)
+                    {
+                        string uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(ZdjecieFileName.FileName);
+                        string uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/narzedziagraphic", uniqueFileName);
+
+                        using (var stream = new FileStream(uploadPath, FileMode.Create))
+                        {
+                            await ZdjecieFileName.CopyToAsync(stream);
+                        }
+
+                        // Przypisz nazwę pliku do właściwości ZdjecieFileName modelu Narzedzie
+                        existingNarzedzie.ZdjecieFileName = uniqueFileName;
+                    }
+
                     if (!(obecny == null))
                     {
-                        narzedzie.UzytkownikId = obecny;
+                        existingNarzedzie.UzytkownikId = obecny;
                     }
-                    _context.Update(narzedzie);
+
+                    // Aktualizacja pozostałych pól narzędzia
+                    existingNarzedzie.ProducentId = narzedzie.ProducentId;
+                    existingNarzedzie.KategoriaId = narzedzie.KategoriaId;
+                    existingNarzedzie.DataPrzyjecia = narzedzie.DataPrzyjecia;
+                    existingNarzedzie.NumerNarzedzia = narzedzie.NumerNarzedzia;
+                    existingNarzedzie.Nazwa = narzedzie.Nazwa;
+                    existingNarzedzie.Status = narzedzie.Status;
+
+                    _context.Update(existingNarzedzie);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)

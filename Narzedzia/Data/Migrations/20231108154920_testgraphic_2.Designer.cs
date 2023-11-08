@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Narzedzia.Data;
 
@@ -11,9 +12,10 @@ using Narzedzia.Data;
 namespace Narzedzia.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231108154920_testgraphic_2")]
+    partial class testgraphic_2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -258,8 +260,8 @@ namespace Narzedzia.Data.Migrations
                     b.Property<string>("UzytkownikId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ZdjecieFileName")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("ZdjecieBytes")
+                        .HasColumnType("varbinary(max)");
 
                     b.HasKey("NarzedzieId");
 

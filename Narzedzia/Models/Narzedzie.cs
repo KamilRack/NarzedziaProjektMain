@@ -50,6 +50,10 @@ namespace Narzedzia.Models
 
         public virtual List<Awaria>? Awarie { get; set; }
 
+        [Display(Name = "Zdjęcie narzędzia")]
+        public string? ZdjecieFileName { get; set; } // Przechowuje nazwę pliku zdjęcia
+
+
 
     }
 
